@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog-eval-otlp-client
+    app.kubernetes.io/name: datadog-eval-otlp-client
+  name: datadog-eval-otlp-client
+  namespace: datadog-evaluation-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: datadog-eval-otlp-client
+      app.kubernetes.io/name: datadog-eval-otlp-client
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/client.logs: |
+          [
+            {
+              "source": "csharp"
+            }
+          ]
+      labels:
+        app.kubernetes.io/instance: datadog-eval-otlp-client
+        app.kubernetes.io/name: datadog-eval-otlp-client
+        tags.datadoghq.com/env: dev
+        tags.datadoghq.com/service: datadog-eval-otlp-client
+        tags.datadoghq.com/version: 0.1.0
+    spec:
+      containers:
+      - env:
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://opentelemetry-collector.datadog.svc.cluster.local:4317
+        - name: AZURE_EXPERIMENTAL_ENABLE_ACTIVITY_SOURCE
+          value: "true"
+        - name: KUBE_POD_UID
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.uid
+        - name: KUBE_CONTAINER_NAME
+          value: client
+        image: lichtblickartifactory-docker.jfrog.io/datadog-eval-otlp-client:latest
+        imagePullPolicy: Always
+        name: client
+        resources:
+          limits:
+            cpu: 150m
+            memory: 196Mi
+          requests:
+            cpu: 20m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: jfrog-lb-pull-secret

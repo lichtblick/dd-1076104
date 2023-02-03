@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "AksGenericHostClient": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "WebApiBaseUrl": "http://localhost:8080"
+      }
+    }
+  }
+}
